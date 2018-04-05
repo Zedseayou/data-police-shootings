@@ -1,0 +1,53 @@
+---
+title: "Title"
+author: "Calum You"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_notebook:
+    highlight: tango
+    mathjax: null
+    number_sections: yes
+    theme: spacelab
+    toc: yes
+    toc_float:
+      collapsed: false
+---
+# Introduction
+This is an attempt at some visualisations of the data from the Washington Post on police shootings since 2015.
+
+# Setup
+```{r setup}
+library(tidyverse)
+```
+
+# Input
+```{r input}
+data <- read_csv(here::here("fatal-police-shootings-data.csv"))
+```
+# Cleaning
+```{r}
+clean <- data %>%
+  mutate(
+    race = parse_factor(race, levels = c("W", "B", "A", "N", "H", "O")),
+    race = fct_recode(race, White = "W", Black = "B", Asian = "A", Native = "N", Hispanic = "H", Other = "O"),
+    gender = parse_factor(gender, levels = c("M", "F")),
+    state = parse_factor(state, levels = NULL)
+    )
+```
+
+
+# Plotting
+```{r plot}
+ggplot(clean) +
+  geom_histogram(aes(x = date), binwidth = 1)
+
+ggplot(clean) +
+  geom_bar(aes(x = race))
+```
+
+
+
+# Session Info
+```{r session_info, include=TRUE, echo=TRUE, results='markup'}
+devtools::session_info()
+```
